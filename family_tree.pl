@@ -1,6 +1,6 @@
 % ==========================================================
 % Project: Family Relationship Knowledge Base (Prolog)
-% Author : Himanshu Singh
+% Author : Himanshu Kumar
 % Purpose: Demonstrate basic AI reasoning using Prolog
 % ==========================================================
 
