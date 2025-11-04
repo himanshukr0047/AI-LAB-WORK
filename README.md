@@ -244,3 +244,125 @@ Time Complexity: O(k × n²)
 
 Space Complexity: O(n²)
 
+
+# 8-Puzzle Problem using A* Search Algorithm
+
+## Aim
+To solve the **8-Puzzle Problem** using the **A* Search Algorithm**, an informed search method that uses both actual cost and a heuristic estimate to find the optimal path to the goal.
+
+---
+
+## Problem Description
+The **8-Puzzle** is a 3×3 grid puzzle with eight numbered tiles and one blank space (`0`).  
+The objective is to move the blank tile to arrange all tiles into the goal configuration.
+
+### Example
+
+**Initial State**
+1 2 3
+4 0 6
+7 5 8
+
+
+
+**Goal State**
+1 2 3
+4 5 6
+7 8 0
+
+
+
+---
+
+ Algorithm Overview
+
+ 1. State Representation
+Each state (board configuration) is represented as:
+- A 1D list of 9 integers (0–8), where 0 represents the blank.
+- A reference to the **parent state** (for path reconstruction).
+- Two cost values:
+  - **g(n):** Cost from start state to current state.
+  - **h(n):** Heuristic estimate from current state to goal.
+  - **f(n):** Total estimated cost (`f(n) = g(n) + h(n)`).
+
+---
+
+2. Move Generation
+For the blank tile (0), valid moves include:
+- **Left** (if `index % 3 > 0`)
+- **Right** (if `index % 3 < 2`)
+- **Up** (if `index // 3 > 0`)
+- **Down** (if `index // 3 < 2`)
+
+Each move generates a new child state by swapping the blank with the target tile.
+
+---
+
+3. Heuristic Function
+We use the **Manhattan Distance** heuristic:
+
+h(n) = Σ |x_current - x_goal| + |y_current - y_goal|
+
+sql
+Copy code
+
+where (x, y) are the coordinates of each tile (excluding 0).  
+This heuristic is **admissible** — it never overestimates the true cost to reach the goal.
+
+---
+
+4. A* Search Steps
+
+1. Initialize a **priority queue (min-heap)** ordered by `f(n) = g(n) + h(n)`.
+2. Insert the start state into the queue.
+3. While the queue is not empty:
+   - Pop the state with the lowest `f(n)`.
+   - If it matches the goal → reconstruct the path.
+   - Generate all valid neighbor states.
+   - For each neighbor, calculate new `g`, `h`, and `f`.
+   - Add unvisited neighbors to the priority queue.
+4. Maintain a **closed list** of visited states.
+
+---
+
+ Pseudocode
+
+function A_STAR(start, goal):
+    open_list = PriorityQueue()
+    open_list.push(start, f = g + h)
+    closed = set()
+
+    while open_list not empty:
+        current = open_list.pop()
+        if current == goal:
+            return reconstruct_path(current)
+        closed.add(current)
+        for neighbor in generate_moves(current):
+            if neighbor not in closed:
+                compute g, h, f
+                open_list.push(neighbor, f)
+    return None
+Complexity Analysis
+Term	Meaning	Typical Range
+b	Branching Factor	2 – 4
+d	Depth of Optimal Solution	Variable
+n	Total Possible States	9! = 362,880
+
+Time Complexity: O(b^d) in the worst case
+
+Space Complexity: O(b^d) for storing visited and frontier states
+
+Per State Memory: 9 integers + costs + parent pointer
+
+Example Output
+less
+Copy code
+Initial State: [1, 2, 3, 4, 0, 6, 7, 5, 8]
+Goal State:    [1, 2, 3, 4, 5, 6, 7, 8, 0]
+
+Path:
+[1, 2, 3, 4, 0, 6, 7, 5, 8]
+[1, 2, 3, 4, 5, 6, 7, 0, 8]
+[1, 2, 3, 4, 5, 6, 7, 8, 0]
+Goal Reached!
+
